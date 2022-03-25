@@ -38,7 +38,7 @@ public class SignActivity extends AppCompatActivity {
     }
 
     private void InitUI(){
-        mEmailInput = findViewById(R.id.email_input);
+        mEmailInput = findViewById(R.id.email);
         mPasswordInput = findViewById(R.id.password_input);
 
         mSignInButton = findViewById(R.id.btn_sign_in);
