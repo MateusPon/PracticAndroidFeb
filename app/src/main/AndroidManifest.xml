@@ -13,6 +13,9 @@
         android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".CreateCollections"
+            android:exported="false" />
+        <activity
             android:name=".DiscussionScreen"
             android:exported="false" />
         <activity

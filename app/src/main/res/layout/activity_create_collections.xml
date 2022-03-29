@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/black"
+    tools:context=".CreateCollections">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/ic_arrow_left"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:textSize="17dp"
+                android:textStyle="bold"
+                android:text="Создать коллекцию"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="15dp"
+            android:orientation="vertical">
+            <EditText
+                android:id="@+id/intput_title"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/edit_text_rectangle"
+                android:hint="Название"
+                android:textColor="@color/white"
+                android:textColorHint="#AFAFAF"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:orientation="horizontal">
+           <FrameLayout
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:layout_marginLeft="15dp">
+
+               <ImageView
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:src="@drawable/back_orange"/>
+               <ImageView
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_gravity="center"
+                   android:src="@drawable/heartcollection"/>
+           </FrameLayout>
+
+           <Button
+               android:id="@+id/sign_up_button"
+               android:layout_width="241dp"
+               android:layout_height="55dp"
+               style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+               app:strokeColor="#A8A8A8"
+               android:textAllCaps="false"
+               android:layout_marginLeft="30dp"
+               android:textColor="#EF3A01"
+               android:textSize="14sp"
+               android:layout_gravity="center"
+               android:text="Выбрать иконку"/>
+
+       </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/saveBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                app:strokeColor="#A8A8A8"
+                android:textAllCaps="false"
+                android:layout_margin="10dp"
+                android:textColor="@color/white"
+                android:background="@color/orange"
+                android:textSize="14sp"
+                android:text="Сохранить"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>
+
