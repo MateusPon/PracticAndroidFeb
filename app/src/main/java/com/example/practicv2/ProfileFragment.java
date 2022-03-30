@@ -1,64 +1,92 @@
 package com.example.practicv2;
 
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ProfileFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import com.example.practicv2.network.ApiHandler;
+import com.example.practicv2.network.model.UserResponse;
+import com.example.practicv2.service.ApiService;
+import com.squareup.picasso.Picasso;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class ProfileFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private ApiService service = ApiHandler.getInstance().getService();
+    private TextView userFullName;
+    private TextView userEmail;
+    private TextView userId;
+    private String token;
+    //private ImageView userAvatar;
+    private SharedPreferences sp;
 
     public ProfileFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ProfileFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static ProfileFragment newInstance(String param1, String param2) {
-        ProfileFragment fragment = new ProfileFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        return new ProfileFragment();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        View view = inflater.inflate(R.layout.fragment_profile, container, false);
+        initUI(view);
+        getUserData();
+        return view;
     }
+
+    private void initUI(View view){
+        sp = getContext().getSharedPreferences("settings", Context.MODE_PRIVATE);
+        token = sp.getString("token", "");
+    }
+
+    private void getUserData(){
+        AsyncTask.execute(() -> {
+            service.getUserInfo(token).enqueue(new Callback<List<UserResponse>>() {
+                @Override
+                public void onResponse(Call<List<UserResponse>> call, Response<List<UserResponse>> response) {
+                    if(response.isSuccessful()){
+
+
+                        userFullName = getView().findViewById(R.id.userFullName);
+                        userEmail = getView().findViewById(R.id.userEmail);
+                        userId = getView().findViewById(R.id.userId);
+                        //userAvatar = getView().findViewById(R.id.userAvatar);
+                        userFullName.setText(response.body().get(0).getFirstName() + " " + response.body().get(0).getLastName());
+                        userEmail.setText(response.body().get(0).getEmail());
+                        userId.setText(response.body().get(0).getUserId());
+                    } else if(response.code() == 401)
+                        Toast.makeText(getActivity().getApplicationContext(), "Произошла ошибка! Попробуйте позже!", Toast.LENGTH_SHORT).show();
+                    else
+                        Toast.makeText(getActivity().getApplicationContext(), "Произошла ошибка! Попробуйте позже!", Toast.LENGTH_SHORT).show();
+                }
+                @Override
+                public void onFailure(Call<List<UserResponse>> call, Throwable t) {
+                    Log.d(TAG, t.getLocalizedMessage());
+                    Toast.makeText(getActivity().getApplicationContext(), t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+    }
+
 }

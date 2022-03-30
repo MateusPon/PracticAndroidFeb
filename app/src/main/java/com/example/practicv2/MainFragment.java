@@ -1,64 +1,80 @@
 package com.example.practicv2;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.PagerSnapHelper;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SnapHelper;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link MainFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import com.example.practicv2.network.ApiHandler;
+import com.example.practicv2.network.ErrorUtils;
+import com.example.practicv2.network.adapters.MoviesAdapter;
+import com.example.practicv2.network.model.MoviesResponse;
+import com.example.practicv2.service.ApiService;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class MainFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private ApiService service = ApiHandler.getInstance().getService();
+    private MoviesAdapter listAdapter;
+    private List<MoviesResponse> movieList = new ArrayList<>();
+    private RecyclerView recyclerView;
 
     public MainFragment() {
-        // Required empty public constructor
+
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment MainFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static MainFragment newInstance(String param1, String param2) {
-        MainFragment fragment = new MainFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+        return new MainFragment();
     }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_main, container, false);
+       View view = inflater.inflate(R.layout.fragment_main,container,false);
+       getMovies();
+       InitUI(view);
+       return view;
     }
+    private void InitUI (View view) {recyclerView = view.findViewById(R.id.recycleView);}
+    private void getMovies(){
+        AsyncTask.execute(() ->{
+            service.getMovies("new").enqueue(new Callback<List<MoviesResponse>>() {
+                @Override
+                public void onResponse(Call<List<MoviesResponse>> call, Response<List<MoviesResponse>> response) {
+                    if(response.isSuccessful()){
+                        movieList = response.body();
+                        listAdapter = new MoviesAdapter(movieList, getContext());
+                        SnapHelper snapHelper = new PagerSnapHelper();
+                        LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+                        recyclerView.setLayoutManager(manager);
+                        recyclerView.setAdapter(listAdapter);
+                        snapHelper.attachToRecyclerView(recyclerView);
+                    } else if (response.code() == 400){
+                        String serverErrorMessage = ErrorUtils.parseError(response).message();
+                        Toast.makeText(getContext(), serverErrorMessage, Toast.LENGTH_SHORT).show();
+                    }else
+                        Toast.makeText(getContext(), "Не удалось получить информацию о фильмах", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onFailure(Call<List<MoviesResponse>> call, Throwable t) {
+                    Toast.makeText(getContext(), t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+    }
+
 }

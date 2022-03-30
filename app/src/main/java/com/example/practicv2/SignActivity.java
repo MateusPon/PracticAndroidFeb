@@ -2,7 +2,9 @@ package com.example.practicv2;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -29,6 +31,8 @@ public class SignActivity extends AppCompatActivity {
     private Button mSignUpButton;
 
     private ApiService service = ApiHandler.getInstance().getService();
+
+    public SharedPreferences sp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +68,11 @@ public class SignActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<SignInResponse> call, Response<SignInResponse> response) {
                     if (response.isSuccessful()){
+                        sp = getApplicationContext().getSharedPreferences("settings", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sp.edit();
+                        editor.putString("token", response.body().getToken());
+                        editor.apply();
+
                         DataManager.setToken(response.body().getToken());
                         startActivity(new Intent(SignActivity.this, MainActivity.class));
                     } else if (response.code() == 400) {

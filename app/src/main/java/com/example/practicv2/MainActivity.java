@@ -7,6 +7,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,6 +21,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     CollectionsFragment collectionsFragment = new CollectionsFragment();
     ComplationFragment compilationFragment = new ComplationFragment();
     BottomNavigationView bottomNavigationView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,10 +43,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 getSupportFragmentManager().beginTransaction().replace(R.id.mainFrameLayout, compilationFragment).commit();
                 return true;
             case R.id.collectionsFragment:
-                getSupportFragmentManager().beginTransaction().replace(R.id.mainFrameLayout, profileFragment).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.mainFrameLayout, collectionsFragment).commit();
                 return true;
             case R.id.profileFragment:
-                getSupportFragmentManager().beginTransaction().replace(R.id.mainFrameLayout, collectionsFragment).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.mainFrameLayout, profileFragment).commit();
                 return true;
         }
         return false;
@@ -52,6 +54,17 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     public void goDiscussions(View view) {
         Intent intent = new Intent(MainActivity.this, DiscussionScreen.class);
+        startActivity(intent);
+    }
+
+    public void moveToLoginScreen(View view) {
+        Intent i = new Intent(getApplicationContext(), SignActivity.class);
+        finish();
+        startActivity(i);
+    }
+
+    public void goCreateCollections(View view) {
+        Intent intent = new Intent(MainActivity.this, CreateCollections.class);
         startActivity(intent);
     }
 }
